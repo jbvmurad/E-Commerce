@@ -1,0 +1,303 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --font-size: 16px;
+
+  /* Neon E-commerce Color System - Light Mode */
+  --neon-cyan: #00f5ff;
+  --neon-magenta: #ff00ff;
+  --neon-lime: #00ff88;
+  --neon-orange: #ff6b00;
+  --neon-purple: #A855F7;
+  --dark-bg: #020408;
+  --dark-surface: #050d15;
+
+  /* Product Status Colors */
+  --status-active: #10B981;
+  --status-inactive: #64748B;
+  --status-out-of-stock: #EF4444;
+
+  /* Order Status Colors */
+  --order-pending: #F59E0B;
+  --order-confirmed: #3B82F6;
+  --order-shipped: #A855F7;
+  --order-delivered: #10B981;
+  --order-cancelled: #EF4444;
+
+  /* Theme Mappings - Always Dark */
+  --background: #020408;
+  --foreground: #e0f7ff;
+  --card: rgba(0,245,255,0.04);
+  --card-foreground: #e0f7ff;
+  --popover: #050d15;
+  --popover-foreground: #e0f7ff;
+  --primary: #00f5ff;
+  --primary-foreground: #020408;
+  --secondary: #ff00ff;
+  --secondary-foreground: #e0f7ff;
+  --muted: rgba(0,245,255,0.04);
+  --muted-foreground: rgba(224,247,255,0.5);
+  --accent: #00ff88;
+  --accent-foreground: #020408;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(0,245,255,0.15);
+  --input: rgba(0,245,255,0.15);
+  --input-background: rgba(0,245,255,0.04);
+  --switch-background: rgba(0,245,255,0.1);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: #00f5ff;
+  --chart-1: #00f5ff;
+  --chart-2: #ff00ff;
+  --chart-3: #00ff88;
+  --chart-4: #ff6b00;
+  --chart-5: #EF4444;
+
+  /* Spacing System (4px base) */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius: 8px;
+
+  /* Shadows */
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 4px 16px rgba(0, 245, 255, 0.15);
+  --shadow-modal: 0 20px 40px rgba(0, 245, 255, 0.25);
+  --shadow-neon: 0 0 20px rgba(0, 245, 255, 0.5);
+
+  /* Sidebar */
+  --sidebar: #050d15;
+  --sidebar-foreground: #e0f7ff;
+  --sidebar-primary: #00f5ff;
+  --sidebar-primary-foreground: #020408;
+  --sidebar-accent: rgba(0,245,255,0.04);
+  --sidebar-accent-foreground: #e0f7ff;
+  --sidebar-border: rgba(0,245,255,0.15);
+  --sidebar-ring: #00f5ff;
+}
+
+.dark {
+  /* Dark Mode - Neon Theme */
+  --background: #020408;
+  --foreground: #e0f7ff;
+  --card: #050d15;
+  --card-foreground: #e0f7ff;
+  --popover: #050d15;
+  --popover-foreground: #e0f7ff;
+  --primary: #00f5ff;
+  --primary-foreground: #020408;
+  --secondary: #ff00ff;
+  --secondary-foreground: #e0f7ff;
+  --muted: rgba(0,245,255,0.04);
+  --muted-foreground: rgba(224,247,255,0.6);
+  --accent: #00ff88;
+  --accent-foreground: #020408;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(0,245,255,0.15);
+  --input: rgba(0,245,255,0.15);
+  --input-background: rgba(0,245,255,0.04);
+  --ring: #00f5ff;
+  --chart-1: #00f5ff;
+  --chart-2: #ff00ff;
+  --chart-3: #00ff88;
+  --chart-4: #ff6b00;
+  --chart-5: #EF4444;
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 4px 16px rgba(0, 245, 255, 0.3);
+  --shadow-modal: 0 20px 40px rgba(0, 245, 255, 0.4);
+  --shadow-neon: 0 0 30px rgba(0, 245, 255, 0.8);
+  --sidebar: #050d15;
+  --sidebar-foreground: #e0f7ff;
+  --sidebar-primary: #00f5ff;
+  --sidebar-primary-foreground: #020408;
+  --sidebar-accent: rgba(0,245,255,0.04);
+  --sidebar-accent-foreground: #e0f7ff;
+  --sidebar-border: rgba(0,245,255,0.15);
+  --sidebar-ring: #00f5ff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /**
+  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
+  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
+  */
+
+  html {
+    font-size: var(--font-size);
+  }
+
+  h1 {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h4 {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  label {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  button {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  input {
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-normal);
+    line-height: 1.5;
+  }
+
+  .font-display {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  /* Neon Animations */
+  @keyframes neon-pulse {
+    0%, 100% {
+      filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 15px currentColor);
+    }
+    50% {
+      filter: drop-shadow(0 0 10px currentColor) drop-shadow(0 0 25px currentColor);
+    }
+  }
+
+  @keyframes gradient-shift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes grid-move {
+    0% { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+  }
+
+  @keyframes float1 {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -55%) scale(1.1); }
+  }
+
+  @keyframes float2 {
+    0%, 100% { transform: translate(50%, -50%) scale(1); }
+    50% { transform: translate(50%, -45%) scale(1.08); }
+  }
+
+  .neon-text {
+    animation: neon-pulse 2s ease-in-out infinite;
+  }
+
+  .gradient-animate {
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  .float-animate {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .neon-border {
+    box-shadow: 0 0 10px var(--primary), inset 0 0 10px var(--primary);
+  }
+
+  .neon-glow {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.3);
+  }
+}

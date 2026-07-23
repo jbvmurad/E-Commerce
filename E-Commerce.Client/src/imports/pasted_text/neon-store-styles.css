@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEON STORE</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cyan: #00f5ff;
+  --magenta: #ff00ff;
+  --lime: #00ff88;
+  --orange: #ff6b00;
+  --bg: #020408;
+  --bg2: #050d15;
+  --surface: rgba(0,245,255,0.04);
+  --border: rgba(0,245,255,0.15);
+}
+ 
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+html { scroll-behavior: smooth; }
+ 
+body {
+  background: var(--bg);
+  color: #e0f7ff;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  overflow-x: hidden;
+  cursor: none;
+}
+ 
+/* CUSTOM CURSOR */
+#cursor {
+  width: 12px; height: 12px;
+  background: var(--cyan);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.1s;
+  box-shadow: 0 0 12px var(--cyan), 0 0 24px var(--cyan);
+  mix-blend-mode: screen;
+}
+#cursor-ring {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(0,245,255,0.5);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transition: all 0.12s ease;
+}
+ 
+/* CANVAS BG */
+#bg-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  opacity: 0.6;
+}
+ 
+/* SCANLINES overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+ 
+/* NOISE grain */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -50%;
+  width: 200%; height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 2;
+  animation: grain 0.5s steps(1) infinite;
+}
+@keyframes grain {
+  0%,100%{ transform: translate(0,0) }
+  10%{ transform: translate(-2%,-3%) }
+  20%{ transform: translate(3%,2%) }
+  30%{ transform: translate(-1%,4%) }
+  40%{ transform: translate(4%,-1%) }
+  50%{ transform: translate(-3%,2%) }
+  60%{ transform: translate(2%,-4%) }
+  70%{ transform: translate(-4%,1%) }
+  80%{ transform: translate(1%,3%) }
+  90%{ transform: translate(3%,-2%) }
+}
+ 
+/* LAYOUT */
+.wrap { position: relative; z-index: 10; }
+ 
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 20px 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: rgba(2,4,8,0.8);
+  backdrop-filter: blur(20px);
+}
+.nav-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  text-shadow: 0 0 20px var(--cyan), 0 0 40px var(--cyan);
+  animation: pulse-logo 3s ease-in-out infinite;
+}
+@keyframes pulse-logo {
+  0%,100%{ text-shadow: 0 0 20px var(--cyan), 0 0 40px var(--cyan); }
+  50%{ text-shadow: 0 0 30px var(--cyan), 0 0 60px var(--cyan), 0 0 80px rgba(0,245,255,0.4); }
+}
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  color: rgba(224,247,255,0.6);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0; right: 0; height: 1px;
+  background: var(--cyan);
+  transform: scaleX(0);
+  transition: transform 0.2s;
+  box-shadow: 0 0 8px var(--cyan);
+}
+.nav-links a:hover { color: var(--cyan); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-right { display: flex; align-items: center; gap: 20px; }
+.cart-btn {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--cyan);
+  padding: 10px 20px;
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  cursor: none;
+  transition: all 0.2s;
+}
+.cart-btn:hover {
+  background: rgba(0,245,255,0.1);
+  box-shadow: 0 0 20px rgba(0,245,255,0.3), inset 0 0 20px rgba(0,245,255,0.05);
+}
+.cart-badge {
+  position: absolute; top: -6px; right: -6px;
+  width: 18px; height: 18px;
+  background: var(--magenta);
+  border-radius: 50%;
+  font-size: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Orbitron', monospace;
+  box-shadow: 0 0 10px var(--magenta);
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+@keyframes badge-pulse {
+  0%,100%{ box-shadow: 0 0 10px var(--magenta); }
+  50%{ box-shadow: 0 0 20px var(--magenta), 0 0 40px rgba(255,0,255,0.4); }
+}
+ 
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  padding: 120px 60px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,245,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: grid-move 20s linear infinite;
+}
+@keyframes grid-move {
+  0%{ background-position: 0 0; }
+  100%{ background-position: 60px 60px; }
+}
+.hero-glow-1 {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(0,245,255,0.12) 0%, transparent 70%);
+  top: 50%; left: 20%;
+  transform: translate(-50%,-50%);
+  animation: float1 8s ease-in-out infinite;
+}
+.hero-glow-2 {
+  position: absolute;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(255,0,255,0.10) 0%, transparent 70%);
+  top: 40%; right: 15%;
+  transform: translate(50%,-50%);
+  animation: float2 10s ease-in-out infinite;
+}
+.hero-glow-3 {
+  position: absolute;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(0,255,136,0.08) 0%, transparent 70%);
+  bottom: 20%; left: 50%;
+  transform: translateX(-50%);
+  animation: float3 6s ease-in-out infinite;
+}
+@keyframes float1 {
+  0%,100%{ transform: translate(-50%,-50%) scale(1); }
+  50%{ transform: translate(-50%,-55%) scale(1.1); }
+}
+@keyframes float2 {
+  0%,100%{ transform: translate(50%,-50%) scale(1); }
+  50%{ transform: translate(50%,-45%) scale(1.08); }
+}
+@keyframes float3 {
+  0%,100%{ transform: translateX(-50%) scale(1); }
+  50%{ transform: translateX(-50%) scale(1.15); }
+}
+.hero-content { position: relative; z-index: 2; max-width: 900px; }
+.hero-tag {
+  display: inline-block;
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--lime);
+  border: 1px solid rgba(0,255,136,0.4);
+  padding: 6px 16px;
+  margin-bottom: 32px;
+  text-shadow: 0 0 10px var(--lime);
+  box-shadow: 0 0 20px rgba(0,255,136,0.1), inset 0 0 10px rgba(0,255,136,0.05);
+  animation: fadeInDown 1s ease forwards;
+}
+.hero-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(42px, 7vw, 88px);
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: -1px;
+  margin-bottom: 24px;
+  animation: fadeInUp 1s ease 0.2s both;
+}
+.hero-title .line1 { display: block; color: #fff; }
+.hero-title .line2 {
+  display: block;
+  background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--cyan));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 4s linear infinite, fadeInUp 1s ease 0.3s both;
+}
+@keyframes gradient-shift {
+  0%{ background-position: 0% 50%; }
+  100%{ background-position: 200% 50%; }
+}
+.hero-sub {
+  font-size: 18px;
+  color: rgba(224,247,255,0.5);
+  letter-spacing: 1px;
+  margin-bottom: 48px;
+  font-weight: 300;
+  animation: fadeInUp 1s ease 0.4s both;
+}
+.hero-btns {
+  display: flex; gap: 20px; justify-content: center;
+  animation: fadeInUp 1s ease 0.5s both;
+}
+.btn-primary {
+  padding: 16px 48px;
+  background: linear-gradient(135deg, var(--cyan), rgba(0,180,200,0.8));
+  color: #020408;
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  border: none;
+  cursor: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  text-transform: uppercase;
+}
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+.btn-primary:hover::before { transform: translateX(100%); }
+.btn-primary:hover {
+  box-shadow: 0 0 30px rgba(0,245,255,0.6), 0 0 60px rgba(0,245,255,0.3);
+  transform: translateY(-2px);
+}
+.btn-ghost {
+  padding: 16px 48px;
+  background: transparent;
+  color: var(--magenta);
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  border: 1px solid var(--magenta);
+  cursor: none;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px var(--magenta);
+  box-shadow: 0 0 10px rgba(255,0,255,0.2), inset 0 0 10px rgba(255,0,255,0.05);
+}
+.btn-ghost:hover {
+  background: rgba(255,0,255,0.1);
+  box-shadow: 0 0 30px rgba(255,0,255,0.5), inset 0 0 20px rgba(255,0,255,0.1);
+  transform: translateY(-2px);
+}
+.hero-scroll {
+  position: absolute; bottom: 40px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  animation: fadeInUp 1s ease 1s both;
+}
+.scroll-line {
+  width: 1px; height: 60px;
+  background: linear-gradient(to bottom, var(--cyan), transparent);
+  animation: scroll-pulse 2s ease-in-out infinite;
+}
+@keyframes scroll-pulse {
+  0%,100%{ opacity: 0.3; transform: scaleY(1); }
+  50%{ opacity: 1; transform: scaleY(0.7); }
+}
+.scroll-text {
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(0,245,255,0.4);
+}
+ 
+/* STATS */
+.stats {
+  padding: 60px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.stat {
+  background: var(--bg);
+  padding: 40px 30px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.stat::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  transform: scaleX(0);
+  transition: transform 0.4s;
+}
+.stat:hover::before { transform: scaleX(1); }
+.stat:hover { background: rgba(0,245,255,0.02); }
+.stat-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--cyan);
+  text-shadow: 0 0 20px rgba(0,245,255,0.5);
+  display: block;
+  margin-bottom: 8px;
+}
+.stat-label {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(224,247,255,0.4);
+  font-weight: 600;
+}
+ 
+/* SECTION */
+.section { padding: 100px 60px; }
+.section-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 60px;
+}
+.section-tag {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+.section-title em {
+  font-style: normal;
+  color: var(--magenta);
+  text-shadow: 0 0 20px var(--magenta);
+}
+.see-all {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0,245,255,0.3);
+  padding-bottom: 4px;
+  transition: all 0.2s;
+}
+.see-all:hover { border-color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+ 
+/* CATEGORIES */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+.cat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 32px 16px;
+  text-align: center;
+  cursor: none;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.cat-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(0,245,255,0.05), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cat-card:hover::after { opacity: 1; }
+.cat-card:hover {
+  border-color: rgba(0,245,255,0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0,245,255,0.15), 0 0 0 1px rgba(0,245,255,0.2);
+}
+.cat-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  display: block;
+  transition: transform 0.3s;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+.cat-card:hover .cat-icon { transform: scale(1.2) rotate(-5deg); }
+.cat-name {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: rgba(224,247,255,0.7);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+ 
+/* PRODUCTS */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.product-card {
+  background: var(--bg2);
+  border: 1px solid rgba(0,245,255,0.08);
+  position: relative;
+  overflow: hidden;
+  cursor: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  group: true;
+}
+.product-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,245,255,0.03) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.product-card:hover {
+  border-color: rgba(0,245,255,0.3);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,245,255,0.2), 0 0 40px rgba(0,245,255,0.08);
+}
+.product-card:hover::before { opacity: 1; }
+.product-img {
+  width: 100%; aspect-ratio: 1;
+  background: linear-gradient(135deg, #0a1520, #0d1f30);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 64px;
+  position: relative;
+  overflow: hidden;
+}
+.product-img::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, var(--bg2));
+}
+.product-img-glow {
+  position: absolute; inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.product-card:hover .product-img-glow { opacity: 1; }
+.product-badge {
+  position: absolute; top: 12px; left: 12px;
+  font-family: 'Orbitron', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  padding: 4px 10px;
+  text-transform: uppercase;
+  z-index: 2;
+}
+.badge-active { background: rgba(0,255,136,0.15); color: var(--lime); border: 1px solid rgba(0,255,136,0.3); }
+.badge-new { background: rgba(0,245,255,0.15); color: var(--cyan); border: 1px solid rgba(0,245,255,0.3); }
+.badge-hot { background: rgba(255,107,0,0.15); color: var(--orange); border: 1px solid rgba(255,107,0,0.3); }
+.wishlist-btn {
+  position: absolute; top: 12px; right: 12px;
+  width: 32px; height: 32px;
+  background: rgba(2,4,8,0.8);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: none;
+  font-size: 14px;
+  transition: all 0.2s;
+  z-index: 2;
+}
+.wishlist-btn:hover {
+  background: rgba(255,0,255,0.15);
+  border-color: var(--magenta);
+  box-shadow: 0 0 15px rgba(255,0,255,0.3);
+}
+.product-info { padding: 20px; }
+.product-cat {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(0,245,255,0.5);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.product-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(224,247,255,0.9);
+  margin-bottom: 16px;
+  letter-spacing: 0.3px;
+  line-height: 1.4;
+}
+.product-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.product-price {
+  font-family: 'Orbitron', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cyan);
+  text-shadow: 0 0 15px rgba(0,245,255,0.4);
+}
+.add-btn {
+  background: transparent;
+  border: 1px solid rgba(0,245,255,0.3);
+  color: var(--cyan);
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 8px 16px;
+  cursor: none;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.add-btn:hover {
+  background: rgba(0,245,255,0.1);
+  border-color: var(--cyan);
+  box-shadow: 0 0 20px rgba(0,245,255,0.2);
+}
+ 
+/* FEATURES STRIP */
+.features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  margin: 0 60px;
+  border: 1px solid var(--border);
+}
+.feature {
+  background: var(--bg);
+  padding: 40px 32px;
+  display: flex; align-items: center; gap: 20px;
+  transition: background 0.3s;
+}
+.feature:hover { background: rgba(0,245,255,0.03); }
+.feature-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+.feature-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.feature-sub { font-size: 13px; color: rgba(224,247,255,0.4); }
+ 
+/* PROMO BANNER */
+.promo {
+  margin: 100px 60px;
+  background: linear-gradient(135deg, rgba(0,245,255,0.06) 0%, rgba(255,0,255,0.06) 100%);
+  border: 1px solid rgba(0,245,255,0.15);
+  padding: 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.promo::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(from 0deg, transparent 0%, rgba(0,245,255,0.03) 25%, transparent 50%, rgba(255,0,255,0.03) 75%, transparent 100%);
+  animation: rotate-bg 20s linear infinite;
+}
+@keyframes rotate-bg {
+  from{ transform: rotate(0deg); }
+  to{ transform: rotate(360deg); }
+}
+.promo-content { position: relative; z-index: 2; }
+.promo-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--orange);
+  text-shadow: 0 0 15px var(--orange);
+  margin-bottom: 24px;
+}
+.promo-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 52px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 24px;
+  line-height: 1.1;
+}
+.promo-title span {
+  color: var(--orange);
+  text-shadow: 0 0 30px var(--orange);
+}
+.promo-sub { font-size: 18px; color: rgba(224,247,255,0.5); margin-bottom: 40px; }
+.countdown {
+  display: flex; gap: 20px; justify-content: center; margin-bottom: 40px;
+}
+.countdown-item {
+  background: rgba(2,4,8,0.8);
+  border: 1px solid rgba(255,107,0,0.3);
+  padding: 16px 24px;
+  text-align: center;
+  min-width: 80px;
+}
+.countdown-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--orange);
+  text-shadow: 0 0 20px var(--orange);
+  display: block;
+}
+.countdown-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(224,247,255,0.4);
+  text-transform: uppercase;
+}
+ 
+/* FOOTER */
+footer {
+  margin-top: 100px;
+  border-top: 1px solid var(--border);
+  padding: 60px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+}
+.footer-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--cyan);
+  text-shadow: 0 0 15px var(--cyan);
+  margin-bottom: 16px;
+}
+.footer-desc { font-size: 14px; color: rgba(224,247,255,0.4); line-height: 1.7; }
+.footer-heading {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: rgba(224,247,255,0.6);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 12px; }
+.footer-links a {
+  color: rgba(224,247,255,0.4);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--cyan); }
+.footer-bottom {
+  padding: 24px 60px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px;
+  color: rgba(224,247,255,0.25);
+  letter-spacing: 1px;
+}
+ 
+/* ANIMATIONS */
+@keyframes fadeInDown {
+  from{ opacity:0; transform:translateY(-20px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+@keyframes fadeInUp {
+  from{ opacity:0; transform:translateY(30px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+ 
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+</style>
+</head>
+<body>
+ 
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<canvas id="bg-canvas"></canvas>
+ 
+<div class="wrap">
+ 
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">NEON STORE</div>
+  <ul class="nav-links">
+    <li><a href="#">Ana Sayfa</a></li>
+    <li><a href="#">Ürünler</a></li>
+    <li><a href="#">Kategoriler</a></li>
+    <li><a href="#">Hakkında</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="cart-btn">
+      ⬡ SEPET
+      <span class="cart-badge">3</span>
+    </button>
+  </div>
+</nav>
+ 
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+  <div class="hero-glow-3"></div>
+  <div class="hero-content">
+    <div class="hero-tag">// YENİ SEZON KOLEKSIYONU 2025</div>
+    <h1 class="hero-title">
+      <span class="line1">PREMİUM</span>
+      <span class="line2">ÜRÜNLER</span>
+    </h1>
+    <p class="hero-sub">Geleceğin alışveriş deneyimini bugün yaşa — sınırsız seçenek, sıfır uzlaşı</p>
+    <div class="hero-btns">
+      <button class="btn-primary">ALIŞVERİŞE BAŞLA</button>
+      <button class="btn-ghost">KATEGORİLER</button>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">SCROLL</span>
+  </div>
+</section>
+ 
+<!-- STATS -->
+<div class="stats">
+  <div class="stat reveal">
+    <span class="stat-num" data-target="12400">0</span>
+    <span class="stat-label">Aktif Ürün</span>
+  </div>
+  <div class="stat reveal reveal-delay-1">
+    <span class="stat-num" data-target="98600">0</span>
+    <span class="stat-label">Mutlu Müşteri</span>
+  </div>
+  <div class="stat reveal reveal-delay-2">
+    <span class="stat-num" data-target="340">0</span>
+    <span class="stat-label">Marka</span>
+  </div>
+  <div class="stat reveal reveal-delay-3">
+    <span class="stat-num" data-target="24">0</span>
+    <span class="stat-label">Saat Destek</span>
+  </div>
+</div>
+ 
+<!-- CATEGORIES -->
+<section class="section">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-tag">// 01 — KATEGORİLER</div>
+      <h2 class="section-title">ALANLARA GÖRE <em>KEŞFET</em></h2>
+    </div>
+    <a href="#" class="see-all">TÜMÜNÜ GÖR →</a>
+  </div>
+  <div class="categories-grid">
+    <div class="cat-card reveal" style="--c:var(--cyan)">
+      <span class="cat-icon" style="color:var(--cyan)">◈</span>
+      <span class="cat-name">Elektronik</span>
+    </div>
+    <div class="cat-card reveal reveal-delay-1" style="--c:var(--magenta)">
+      <span class="cat-icon" style="color:var(--magenta)">◉</span>
+      <span class="cat-name">Moda</span>
+    </div>
+    <div class="cat-card reveal reveal-delay-2">
+      <span class="cat-icon" style="color:var(--lime)">◈</span>
+      <span class="cat-name">Ev & Yaşam</span>
+    </div>
+    <div class="cat-card reveal reveal-delay-3">
+      <span class="cat-icon" style="color:var(--orange)">◉</span>
+      <span class="cat-name">Spor</span>
+    </div>
+    <div class="cat-card reveal reveal-delay-4">
+      <span class="cat-icon" style="color:var(--cyan)">◈</span>
+      <span class="cat-name">Kitap & Medya</span>
+    </div>
+    <div class="cat-card reveal">
+      <span class="cat-icon" style="color:var(--magenta)">◉</span>
+      <span class="cat-name">Güzellik</span>
+    </div>
+  </div>
+</section>
+ 
+<!-- FEATURES -->
+<div class="features reveal">
+  <div class="feature">
+    <span class="feature-icon" style="color:var(--cyan)">◈</span>
+    <div>
+      <div class="feature-title">ÜCRETSİZ KARGO</div>
+      <div class="feature-sub">500₺ üzeri siparişlerde</div>
+    </div>
+  </div>
+  <div class="feature">
+    <span class="feature-icon" style="color:var(--magenta)">◉</span>
+    <div>
+      <div class="feature-title">GÜVENLİ ÖDEME</div>
+      <div class="feature-sub">256-bit SSL şifreleme</div>
+    </div>
+  </div>
+  <div class="feature">
+    <span class="feature-icon" style="color:var(--lime)">◈</span>
+    <div>
+      <div class="feature-title">KOLAY İADE</div>
+      <div class="feature-sub">30 gün içinde iade garantisi</div>
+    </div>
+  </div>
+  <div class="feature">
+    <span class="feature-icon" style="color:var(--orange)">◉</span>
+    <div>
+      <div class="feature-title">7/24 DESTEK</div>
+      <div class="feature-sub">Canlı yardım her zaman</div>
+    </div>
+  </div>
+</div>
+ 
+<!-- PRODUCTS -->
+<section class="section">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-tag">// 02 — ÖNE ÇIKANLAR</div>
+      <h2 class="section-title">ÖZEL <em>SEÇKİ</em></h2>
+    </div>
+    <a href="#" class="see-all">TÜMÜNÜ GÖR →</a>
+  </div>
+  <div class="products-grid">
+ 
+    <div class="product-card reveal">
+      <div class="product-img" style="background: linear-gradient(135deg,#0a1a2e,#0d2540);">
+        <div class="product-img-glow" style="background: radial-gradient(circle, rgba(0,245,255,0.2) 0%, transparent 70%);"></div>
+        ◈
+      </div>
+      <span class="product-badge badge-new">YENİ</span>
+      <button class="wishlist-btn">♡</button>
+      <div class="product-info">
+        <div class="product-cat">Elektronik</div>
+        <div class="product-name">Kuantum Pro Kulaklık X1</div>
+        <div class="product-bottom">
+          <span class="product-price">₺4.299</span>
+          <button class="add-btn">+ SEPET</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="product-card reveal reveal-delay-1">
+      <div class="product-img" style="background: linear-gradient(135deg,#1a0a2e,#250d40);">
+        <div class="product-img-glow" style="background: radial-gradient(circle, rgba(255,0,255,0.2) 0%, transparent 70%);"></div>
+        ◉
+      </div>
+      <span class="product-badge badge-hot">FLAŞ</span>
+      <button class="wishlist-btn">♡</button>
+      <div class="product-info">
+        <div class="product-cat">Moda</div>
+        <div class="product-name">Neo Streetwear Koleksiyonu</div>
+        <div class="product-bottom">
+          <span class="product-price">₺1.899</span>
+          <button class="add-btn">+ SEPET</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="product-card reveal reveal-delay-2">
+      <div class="product-img" style="background: linear-gradient(135deg,#0a2e14,#0d4020);">
+        <div class="product-img-glow" style="background: radial-gradient(circle, rgba(0,255,136,0.2) 0%, transparent 70%);"></div>
+        ◈
+      </div>
+      <span class="product-badge badge-active">AKTİF</span>
+      <button class="wishlist-btn">♡</button>
+      <div class="product-info">
+        <div class="product-cat">Ev & Yaşam</div>
+        <div class="product-name">Akıllı Ortam Lambası V3</div>
+        <div class="product-bottom">
+          <span class="product-price">₺2.150</span>
+          <button class="add-btn">+ SEPET</button>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="product-card reveal reveal-delay-3">
+      <div class="product-img" style="background: linear-gradient(135deg,#2e1a0a,#402510);">
+        <div class="product-img-glow" style="background: radial-gradient(circle, rgba(255,107,0,0.2) 0%, transparent 70%);"></div>
+        ◉
+      </div>
+      <span class="product-badge badge-hot">-30%</span>
+      <button class="wishlist-btn">♡</button>
+      <div class="product-info">
+        <div class="product-cat">Spor</div>
+        <div class="product-name">Hyperion Koşu Ayakkabısı</div>
+        <div class="product-bottom">
+          <span class="product-price">₺3.499</span>
+          <button class="add-btn">+ SEPET</button>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</section>
+ 
+<!-- PROMO BANNER -->
+<div class="promo reveal">
+  <div class="promo-content">
+    <div class="promo-label">// SINIRLI SÜRE TEKLİFİ</div>
+    <h2 class="promo-title">YAZA ÖZEL<br><span>%50'YE KADAR</span> İNDİRİM</h2>
+    <p class="promo-sub">Seçili ürünlerde büyük indirimler — kaçırma!</p>
+    <div class="countdown">
+      <div class="countdown-item">
+        <span class="countdown-num" id="hours">08</span>
+        <span class="countdown-label">Saat</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-num" id="mins">34</span>
+        <span class="countdown-label">Dakika</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-num" id="secs">00</span>
+        <span class="countdown-label">Saniye</span>
+      </div>
+    </div>
+    <button class="btn-primary" style="font-size:13px; padding:18px 56px;">İNDİRİMLERİ KEŞFETfont</button>
+  </div>
+</div>
+ 
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">NEON STORE</div>
+    <p class="footer-desc">Geleceğin alışveriş platformu. Premium ürünler, güvenli ödeme, hızlı teslimat. Teknoloji ve tasarımın buluşma noktası.</p>
+  </div>
+  <div>
+    <div class="footer-heading">Hızlı Linkler</div>
+    <ul class="footer-links">
+      <li><a href="#">Ana Sayfa</a></li>
+      <li><a href="#">Ürünler</a></li>
+      <li><a href="#">Kampanyalar</a></li>
+      <li><a href="#">Hakkımızda</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-heading">Destek</div>
+    <ul class="footer-links">
+      <li><a href="#">SSS</a></li>
+      <li><a href="#">Kargo Takip</a></li>
+      <li><a href="#">İade & Değişim</a></li>
+      <li><a href="#">İletişim</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-heading">İletişim</div>
+    <ul class="footer-links">
+      <li><a href="#">info@neonstore.com</a></li>
+      <li><a href="#">+90 212 000 00 00</a></li>
+      <li><a href="#">Istanbul, Türkiye</a></li>
+    </ul>
+  </div>
+</footer>
+ 
+<div class="footer-bottom">
+  <span>© 2025 NEON STORE — TÜM HAKLAR SAKLIDIR</span>
+  <span>GİZLİLİK · KULLANIM KOŞULLARI · ÇEREZLER</span>
+</div>
+ 
+</div>
+ 
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animateCursor() {
+  cursor.style.left = mx - 6 + 'px';
+  cursor.style.top = my - 6 + 'px';
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) *.12;
+  ring.style.left = rx - 18 + 'px';
+  ring.style.top = ry - 18 + 'px';
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+document.querySelectorAll('button, a, .cat-card, .product-card').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.transform = 'scale(2)'; ring.style.transform = 'scale(1.5)'; ring.style.borderColor = 'rgba(255,0,255,0.7)'; });
+  el.addEventListener('mouseleave', () => { cursor.style.transform = 'scale(1)'; ring.style.transform = 'scale(1)'; ring.style.borderColor = 'rgba(0,245,255,0.5)'; });
+});
+ 
+// CANVAS PARTICLES
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+ 
+const particles = Array.from({length: 80}, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
+  vx: (Math.random() - 0.5) * 0.4,
+  vy: (Math.random() - 0.5) * 0.4,
+  r: Math.random() * 1.5 + 0.3,
+  color: ['#00f5ff','#ff00ff','#00ff88','#ff6b00'][Math.floor(Math.random()*4)],
+  alpha: Math.random() * 0.6 + 0.1
+}));
+ 
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = canvas.width;
+    if (p.x > canvas.width) p.x = 0;
+    if (p.y < 0) p.y = canvas.height;
+    if (p.y > canvas.height) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.fill();
+  });
+  particles.forEach((a, i) => {
+    particles.slice(i+1).forEach(b => {
+      const d = Math.hypot(a.x-b.x, a.y-b.y);
+      if (d < 120) {
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = a.color;
+        ctx.globalAlpha = (1 - d/120) * 0.12;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    });
+  });
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+ 
+// REVEAL ON SCROLL
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1 });
+reveals.forEach(el => observer.observe(el));
+ 
+// COUNTER ANIMATION
+function animateCounter(el, target) {
+  let current = 0;
+  const step = target / 60;
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = Math.floor(current).toLocaleString('tr-TR');
+    if (current >= target) clearInterval(timer);
+  }, 25);
+}
+const statObserver = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const el = e.target.querySelector('[data-target]');
+      if (el) animateCounter(el, parseInt(el.dataset.target));
+      statObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stat').forEach(el => statObserver.observe(el));
+ 
+// COUNTDOWN
+let endTime = Date.now() + (8*3600 + 34*60) * 1000;
+function updateCountdown() {
+  const diff = Math.max(0, endTime - Date.now());
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('hours').textContent = String(h).padStart(2,'0');
+  document.getElementById('mins').textContent = String(m).padStart(2,'0');
+  document.getElementById('secs').textContent = String(s).padStart(2,'0');
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
+ 
+// Fix typo in button text
+document.querySelectorAll('.btn-primary').forEach(b => {
+  if (b.textContent.includes('KEŞFETfont')) b.textContent = 'İNDİRİMLERİ KEŞFET';
+});
+</script>
+</body>
+</html>
+ 
