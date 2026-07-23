@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+  	<PackageReference Include="AutoMapper" Version="16.2.0" />
+  	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.10" />
+  	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
+  		<PrivateAssets>all</PrivateAssets>
+  		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+  	</PackageReference>
+  	<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+  	<PackageReference Include="WolverineFx.RuntimeCompilation" Version="6.21.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\shared\E-Commerce.Server.Shared.Authorization\E-Commerce.Server.Shared.Authorization\E-Commerce.Server.Shared.Authorization.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\shared\E-Commerce.Server.Shared.Caching\E-Commerce.Server.Shared.Caching\E-Commerce.Server.Shared.Caching.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\shared\E-Commerce.Server.Shared.Contracts\E-Commerce.Server.Shared.Contracts\E-Commerce.Server.Shared.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\shared\E-Commerce.Server.Shared.Localization\E-Commerce.Server.Shared.Localization\E-Commerce.Server.Shared.Localization.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\shared\E-Commerce.Server.Shared.Storage\E-Commerce.Server.Shared.Storage\E-Commerce.Server.Shared.Storage.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\shared\E-Commerce.Server.Shared.WebAuthentication\E-Commerce.Server.Shared.WebAuthentication\E-Commerce.Server.Shared.WebAuthentication.csproj" />
+    <ProjectReference Include="..\..\Core\Security.Application\Security.Application.csproj" />
+  </ItemGroup>
+
+</Project>

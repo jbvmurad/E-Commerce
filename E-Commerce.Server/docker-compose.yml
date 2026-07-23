@@ -1,0 +1,359 @@
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: src/gateway/ApiGateway/src/ApiGateway/Dockerfile
+    container_name: e-commerce-api-gateway
+    ports:
+      - "${GATEWAY_HTTP_PORT:-5000}:8080"
+      - "${GATEWAY_HTTPS_PORT:-7000}:8081"
+    env_file:
+      - ./.env-shared
+      - ./src/gateway/ApiGateway/.env
+    depends_on:
+      - security-api
+      - profile-api
+      - ai-api
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  security-api:
+    build:
+      context: .
+      dockerfile: src/services/src/Security/src/Security/Dockerfile
+    container_name: e-commerce-security-api
+    ports:
+      - "${SECURITY_HTTP_PORT:-5043}:8080"
+      - "${SECURITY_HTTPS_PORT:-7170}:8081"
+    env_file:
+      - ./.env-shared
+      - ./src/services/src/Security/.env
+    depends_on:
+      security-db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      localstack:
+        condition: service_started
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  security-db:
+    image: postgres:17
+    container_name: e-commerce-security-db
+    env_file:
+      - ./.env-shared
+    environment:
+      POSTGRES_DB: SecurityDb
+    ports:
+      - "${SECURITY_DB_EXTERNAL_PORT:-5437}:5432"
+    volumes:
+      - security-db-data:/var/lib/postgresql/data
+      - ./docker/postgres-init.sh:/postgres-init.sh
+    entrypoint: ["/bin/bash", "/postgres-init.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d SecurityDb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  profile-api:
+    build:
+      context: .
+      dockerfile: src/services/src/Profile/src/Profile/Dockerfile
+    container_name: e-commerce-profile-api
+    ports:
+      - "${PROFILE_HTTP_PORT:-5003}:8080"
+      - "${PROFILE_HTTPS_PORT:-7003}:8081"
+    env_file:
+      - ./.env-shared
+      - ./src/services/src/Profile/.env
+    depends_on:
+      profile-db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      localstack:
+        condition: service_started
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  profile-db:
+    image: postgres:17
+    container_name: e-commerce-profile-db
+    env_file:
+      - ./.env-shared
+    environment:
+      POSTGRES_DB: ProfileDb
+    ports:
+      - "${PROFILE_DB_EXTERNAL_PORT:-5439}:5432"
+    volumes:
+      - profile-db-data:/var/lib/postgresql/data
+      - ./docker/postgres-init.sh:/postgres-init.sh
+    entrypoint: ["/bin/bash", "/postgres-init.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d ProfileDb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  ai-api:
+    build:
+      context: .
+      dockerfile: src/services/src/AI/src/AI/Dockerfile
+    container_name: e-commerce-ai-api
+    ports:
+      - "${AI_HTTP_PORT:-5005}:8080"
+      - "${AI_HTTPS_PORT:-7005}:8081"
+    env_file:
+      - ./.env-shared
+      - ./src/services/src/AI/.env
+    depends_on:
+      ai-db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+      localstack:
+        condition: service_started
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  ai-db:
+    image: postgres:17
+    container_name: e-commerce-ai-db
+    env_file:
+      - ./.env-shared
+    environment:
+      POSTGRES_DB: AIDb
+    ports:
+      - "${AI_DB_EXTERNAL_PORT:-5441}:5432"
+    volumes:
+      - ai-db-data:/var/lib/postgresql/data
+      - ./docker/postgres-init.sh:/postgres-init.sh
+    entrypoint: ["/bin/bash", "/postgres-init.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d AIDb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: e-commerce-redis
+    env_file:
+      - ./.env-shared
+    entrypoint: ["sh", "-c", "redis-server --appendonly yes --user default off nopass --user \"$$REDIS_USERNAME\" on \">$$REDIS_PASSWORD\" ~* \"&*\" +@all"]
+    ports:
+      - "${REDIS_EXTERNAL_PORT:-6380}:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: e-commerce-rabbitmq
+    user: rabbitmq
+    env_file:
+      - ./.env-shared
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    ports:
+      - "${RABBITMQ_AMQP_PORT:-5673}:5672"
+      - "${RABBITMQ_UI_PORT:-15673}:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: e-commerce-prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/alert.rules.yml:/etc/prometheus/alert.rules.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    depends_on:
+      - alertmanager
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: e-commerce-alertmanager
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+      - alertmanager-data:/alertmanager
+    ports:
+      - "${ALERTMANAGER_PORT:-9093}:9093"
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:2.9.3
+    container_name: e-commerce-loki
+    volumes:
+      - ./monitoring/loki-config.yml:/etc/loki/local-config.yaml
+      - loki-data:/loki
+    ports:
+      - "${LOKI_PORT:-3100}:3100"
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: e-commerce-grafana
+    env_file:
+      - ./.env-shared
+    environment:
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./monitoring/grafana/entrypoint.sh:/entrypoint.sh
+    entrypoint: ["/bin/sh", "/entrypoint.sh"]
+    ports:
+      - "${GRAFANA_PORT:-3001}:3000"
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  localstack:
+    image: localstack/localstack:3
+    container_name: e-commerce-localstack
+    environment:
+      - SERVICES=s3
+      - EDGE_PORT=4566
+      - AWS_DEFAULT_REGION=${AWS_REGION:-eu-central-1}
+      - DEBUG=0
+    ports:
+      - "${LOCALSTACK_EDGE_PORT:-14566}:4566"
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: e-commerce-pgadmin
+    env_file:
+      - ./.env-shared
+    environment:
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+      PGADMIN_SERVER_JSON_FILE: "/tmp/servers.json"
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      - security-db
+      - profile-db
+      - ai-db
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        cat > /tmp/servers.json <<CONFIG
+        {
+          "Servers": {
+            "1": {
+              "Name": "SecurityDb",
+              "Group": "E-Commerce",
+              "Host": "e-commerce-security-db",
+              "Port": 5432,
+              "MaintenanceDB": "SecurityDb",
+              "Username": "$$POSTGRES_USER",
+              "SSLMode": "prefer"
+            },
+            "2": {
+              "Name": "ProfileDb",
+              "Group": "E-Commerce",
+              "Host": "e-commerce-profile-db",
+              "Port": 5432,
+              "MaintenanceDB": "ProfileDb",
+              "Username": "$$POSTGRES_USER",
+              "SSLMode": "prefer"
+            },
+            "3": {
+              "Name": "AIDb",
+              "Group": "E-Commerce",
+              "Host": "e-commerce-ai-db",
+              "Port": 5432,
+              "MaintenanceDB": "AIDb",
+              "Username": "$$POSTGRES_USER",
+              "SSLMode": "prefer"
+            }
+          }
+        }
+        CONFIG
+        exec /entrypoint.sh
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: e-commerce-redisinsight
+    ports:
+      - "${REDISINSIGHT_PORT:-8001}:5540"
+    depends_on:
+      - redis
+    volumes:
+      - redisinsight-data:/data
+    networks:
+      - e-commerce-network
+    restart: unless-stopped
+
+networks:
+  e-commerce-network:
+    driver: bridge
+
+volumes:
+  security-db-data:
+  profile-db-data:
+  ai-db-data:
+  localstack-data:
+  redis-data:
+  rabbitmq-data:
+  prometheus-data:
+  alertmanager-data:
+  loki-data:
+  grafana-data:
+  pgadmin-data:
+  redisinsight-data:

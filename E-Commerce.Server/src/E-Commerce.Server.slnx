@@ -1,0 +1,82 @@
+<Solution>
+  <Folder Name="/gateway/" />
+  <Folder Name="/gateway/ApiGateway/" />
+  <Folder Name="/gateway/ApiGateway/src/">
+    <Project Path="gateway/ApiGateway/src/ApiGateway/ApiGateway.csproj" />
+  </Folder>
+  <Folder Name="/services/" />
+  <Folder Name="/services/src/" />
+  <Folder Name="/services/src/AI/" />
+  <Folder Name="/services/src/AI/src/">
+    <Project Path="services/src/AI/src/AI/AI.csproj" />
+  </Folder>
+  <Folder Name="/services/src/AI/src/Core/">
+    <Project Path="services/src/AI/src/Core/AI.Application/AI.Application.csproj" />
+    <Project Path="services/src/AI/src/Core/AI.Domain/AI.Domain.csproj" />
+  </Folder>
+  <Folder Name="/services/src/AI/src/External/">
+    <Project Path="services/src/AI/src/External/AI.Infrastructure/AI.Infrastructure.csproj" />
+    <Project Path="services/src/AI/src/External/AI.Persistance/AI.Persistance.csproj" />
+    <Project Path="services/src/AI/src/External/AI.Presentation/AI.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/services/src/Profile/" />
+  <Folder Name="/services/src/Profile/src/">
+    <Project Path="services/src/Profile/src/Profile/Profile.csproj" />
+  </Folder>
+  <Folder Name="/services/src/Profile/src/Core/">
+    <Project Path="services/src/Profile/src/Core/Profile.Application/Profile.Application.csproj" />
+    <Project Path="services/src/Profile/src/Core/Profile.Domain/Profile.Domain.csproj" />
+  </Folder>
+  <Folder Name="/services/src/Profile/src/External/">
+    <Project Path="services/src/Profile/src/External/Profile.Infrastructure/Profile.Infrastructure.csproj" />
+    <Project Path="services/src/Profile/src/External/Profile.Persistance/Profile.Persistance.csproj" />
+    <Project Path="services/src/Profile/src/External/Profile.Presentation/Profile.Presentation.csproj" />
+  </Folder>
+  <Folder Name="/services/src/Security/" />
+  <Folder Name="/services/src/Security/src/">
+    <Project Path="services/src/Security/src/Security/Security.csproj" />
+  </Folder>
+  <Folder Name="/services/src/Security/src/Core/">
+    <Project Path="services/src/Security/src/Core/Security.Application/Security.Application.csproj" Id="2127fa8f-afb7-467b-8962-c9c16f08919e" />
+    <Project Path="services/src/Security/src/Core/Security.Domain/Security.Domain.csproj" Id="c843c7c1-9fff-495f-b584-5adf72f3bf10" />
+  </Folder>
+  <Folder Name="/services/src/Security/src/External/">
+    <Project Path="services/src/Security/src/External/Security.Infrastructure/Security.Infrastructure.csproj" Id="275caa9e-1a58-4868-b937-006db9bed2ce" />
+    <Project Path="services/src/Security/src/External/Security.Persistance/Security.Persistance.csproj" Id="6becdb1f-813d-48fa-bbab-90b9fa327832" />
+    <Project Path="services/src/Security/src/External/Security.Presentation/Security.Presentation.csproj" Id="97e9acd1-dfa0-4c36-855b-38439c314d62" />
+  </Folder>
+  <Folder Name="/shared/" />
+  <Folder Name="/shared/E-Commerce.Server.Shared.AI/">
+    <Project Path="shared/E-Commerce.Server.Shared.AI/E-Commerce.Server.Shared.AI/E-Commerce.Server.Shared.AI.csproj" />
+  </Folder>
+  <Folder Name="/shared/E-Commerce.Server.Shared.Authentication/">
+    <Project Path="shared/E-Commerce.Server.Shared.Authentication/E-Commerce.Server.Shared.Authentication/E-Commerce.Server.Shared.Authentication.csproj" />
+  </Folder>
+  <Folder Name="/shared/E-Commerce.Server.Shared.Authorization/">
+    <Project Path="shared/E-Commerce.Server.Shared.Authorization/E-Commerce.Server.Shared.Authorization/E-Commerce.Server.Shared.Authorization.csproj" />
+  </Folder>
+  <Folder Name="/shared/E-Commerce.Server.Shared.Caching/">
+    <Project Path="shared/E-Commerce.Server.Shared.Caching/E-Commerce.Server.Shared.Caching/E-Commerce.Server.Shared.Caching.csproj" />
+  </Folder>
+  <Folder Name="/shared/E-Commerce.Server.Shared.Contracts/">
+    <Project Path="shared/E-Commerce.Server.Shared.Contracts/E-Commerce.Server.Shared.Contracts/E-Commerce.Server.Shared.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/shared/E-Commerce.Server.Shared.EmailService/">
+    <Project Path="shared/E-Commerce.Server.Shared.EmailService/E-Commerce.Server.Shared.EmailService/E-Commerce.Server.Shared.EmailService.csproj" />
+  </Folder>
+  <Folder Name="/shared/E-Commerce.Server.Shared.Localization/">
+    <Project Path="shared/E-Commerce.Server.Shared.Localization/E-Commerce.Server.Shared.Localization/E-Commerce.Server.Shared.Localization.csproj" />
+  </Folder>
+  <Folder Name="/shared/E-Commerce.Server.Shared.Logging/">
+    <Project Path="shared/E-Commerce.Server.Shared.Logging/E-Commerce.Server.Shared.Logging/E-Commerce.Server.Shared.Logging.csproj" />
+  </Folder>
+  <Folder Name="/shared/E-Commerce.Server.Shared.Middleware/">
+    <Project Path="shared/E-Commerce.Server.Shared.Middleware/E-Commerce.Server.Shared.Middleware/E-Commerce.Server.Shared.Middleware.csproj" />
+  </Folder>
+  <Folder Name="/shared/E-Commerce.Server.Shared.Storage/">
+    <Project Path="shared/E-Commerce.Server.Shared.Storage/E-Commerce.Server.Shared.Storage/E-Commerce.Server.Shared.Storage.csproj" Id="8369b110-95dd-4fb5-8459-a2c1a3e7dbf0" />
+  </Folder>
+  <Folder Name="/shared/E-Commerce.Server.Shared.WebAuthentication/">
+    <Project Path="shared/E-Commerce.Server.Shared.WebAuthentication/E-Commerce.Server.Shared.WebAuthentication/E-Commerce.Server.Shared.WebAuthentication.csproj" />
+  </Folder>
+</Solution>

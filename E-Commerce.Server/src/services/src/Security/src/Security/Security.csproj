@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.10">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="WolverineFx.EntityFrameworkCore" Version="6.20.0" />
+		<PackageReference Include="WolverineFx.FluentValidation" Version="6.20.0" />
+		<PackageReference Include="WolverineFx.Postgresql" Version="6.20.0" />
+		<PackageReference Include="WolverineFx.RabbitMQ" Version="6.20.0" />
+		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.16.15" />
+		<PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+		<PackageReference Include="Serilog.Sinks.Postgresql.Alternative" Version="4.2.0" />
+	</ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\shared\E-Commerce.Server.Shared.Caching\E-Commerce.Server.Shared.Caching\E-Commerce.Server.Shared.Caching.csproj" />
+    <ProjectReference Include="..\..\..\..\..\shared\E-Commerce.Server.Shared.Contracts\E-Commerce.Server.Shared.Contracts\E-Commerce.Server.Shared.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\..\shared\E-Commerce.Server.Shared.EmailService\E-Commerce.Server.Shared.EmailService\E-Commerce.Server.Shared.EmailService.csproj" />
+    <ProjectReference Include="..\..\..\..\..\shared\E-Commerce.Server.Shared.Localization\E-Commerce.Server.Shared.Localization\E-Commerce.Server.Shared.Localization.csproj" />
+    <ProjectReference Include="..\..\..\..\..\shared\E-Commerce.Server.Shared.Logging\E-Commerce.Server.Shared.Logging\E-Commerce.Server.Shared.Logging.csproj" />
+    <ProjectReference Include="..\..\..\..\..\shared\E-Commerce.Server.Shared.Middleware\E-Commerce.Server.Shared.Middleware\E-Commerce.Server.Shared.Middleware.csproj" />
+    <ProjectReference Include="..\..\..\..\..\shared\E-Commerce.Server.Shared.Storage\E-Commerce.Server.Shared.Storage\E-Commerce.Server.Shared.Storage.csproj" />
+    <ProjectReference Include="..\..\..\..\..\shared\E-Commerce.Server.Shared.WebAuthentication\E-Commerce.Server.Shared.WebAuthentication\E-Commerce.Server.Shared.WebAuthentication.csproj" />
+    <ProjectReference Include="..\Core\Security.Application\Security.Application.csproj" />
+    <ProjectReference Include="..\External\Security.Infrastructure\Security.Infrastructure.csproj" />
+    <ProjectReference Include="..\External\Security.Persistance\Security.Persistance.csproj" />
+    <ProjectReference Include="..\External\Security.Presentation\Security.Presentation.csproj" />
+  </ItemGroup>
+
+</Project>
