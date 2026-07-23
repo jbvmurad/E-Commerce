@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #020408;
+      color: #e0f7ff;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+    .wrapper {
+      width: 100%;
+      padding: 28px 12px;
+      box-sizing: border-box;
+    }
+    .container {
+      width: 100%;
+      max-width: 620px;
+      margin: 0 auto;
+      overflow: hidden;
+      background-color: #050d15;
+      border: 1px solid #164f59;
+      border-radius: 14px;
+      box-shadow: 0 0 32px rgba(0, 245, 255, 0.16);
+    }
+    .header {
+      padding: 30px 24px 24px;
+      text-align: center;
+      background: linear-gradient(135deg, #06141e 0%, #041018 58%, #16051a 100%);
+      border-bottom: 1px solid #164f59;
+    }
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      line-height: 46px;
+      margin: 0 auto 12px;
+      color: #020408;
+      background-color: #00f5ff;
+      border-radius: 10px;
+      font-weight: 900;
+      font-size: 22px;
+      box-shadow: 0 0 22px rgba(0, 245, 255, 0.58);
+    }
+    .brand-name {
+      color: #00f5ff;
+      font-weight: 800;
+      font-size: 25px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-shadow: 0 0 16px rgba(0, 245, 255, 0.75);
+    }
+    .content {
+      padding: 34px 30px;
+      color: #c9e7ef;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+    .content h2 {
+      color: #00f5ff !important;
+      margin: 0 0 16px;
+      font-size: 24px;
+      line-height: 1.3;
+    }
+    .button {
+      display: inline-block;
+      min-width: 190px;
+      padding: 14px 28px;
+      margin: 22px 0;
+      color: #020408 !important;
+      background: linear-gradient(90deg, #00f5ff 0%, #00b4c8 100%);
+      border: 1px solid #62fbff;
+      border-radius: 9px;
+      text-decoration: none;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 800;
+      box-shadow: 0 0 22px rgba(0, 245, 255, 0.34);
+    }
+    .fallback-link {
+      margin-top: 16px;
+      padding: 14px;
+      color: #89b9c4;
+      background-color: #02070c;
+      border-left: 3px solid #ff00ff;
+      border-radius: 5px;
+      word-break: break-all;
+      font-size: 12px;
+    }
+    .footer {
+      padding: 22px 24px;
+      color: #6f9ba5;
+      background-color: #02070c;
+      border-top: 1px solid #12343d;
+      text-align: center;
+      font-size: 12px;
+    }
+    @media only screen and (max-width: 480px) {
+      .wrapper { padding: 14px 8px; }
+      .content { padding: 26px 18px; }
+      .header { padding: 24px 16px 20px; }
+      .brand-name { font-size: 20px; letter-spacing: 2px; }
+      .button { display: block; min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="header">
+        <div class="brand-mark">E</div>
+        <div class="brand-name">E-Commerce</div>
+      </div>
+      <div class="content">
+        {{Body}}
+      </div>
+      <div class="footer">
+        Secure shopping • E-Commerce<br>
+        &copy; 2026 E-Commerce. All rights reserved.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

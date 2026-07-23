@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+  	<PackageReference Include="AutoMapper" Version="16.2.0" />
+  	<PackageReference Include="Microsoft.AspNetCore.OData" Version="9.5.0" />
+  	<PackageReference Include="WolverineFx" Version="6.21.0" />
+  	<PackageReference Include="WolverineFx.RuntimeCompilation" Version="6.21.0" />
+  	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\shared\E-Commerce.Server.Shared.Authorization\E-Commerce.Server.Shared.Authorization\E-Commerce.Server.Shared.Authorization.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\shared\E-Commerce.Server.Shared.Localization\E-Commerce.Server.Shared.Localization\E-Commerce.Server.Shared.Localization.csproj" />
+    <ProjectReference Include="..\..\Core\Security.Application\Security.Application.csproj" />
+    <ProjectReference Include="..\Security.Infrastructure\Security.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

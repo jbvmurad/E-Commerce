@@ -1,0 +1,40 @@
+# Visual Studio / JetBrains / VS Code
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+.artifacts/
+**/bin/
+**/obj/
+[Bb]uild/
+[Rr]elease/
+[Dd]ebug/
+out/
+
+# Test / coverage
+TestResults/
+*.trx
+coverage/
+*.coverage
+*.coveragexml
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+.env.*
+.env-shared
+!.env.example
+!.env-shared.example
+!.env.*.example
+
+# OS files
+.DS_Store
+Thumbs.db

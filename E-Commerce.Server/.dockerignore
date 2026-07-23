@@ -1,0 +1,50 @@
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Local build outputs
+**/bin/
+**/obj/
+**/.artifacts/
+artifacts/
+publish/
+out/
+
+# Test and coverage outputs
+**/TestResults/
+**/coverage/
+coverage/
+*.coverage
+*.coveragexml
+
+# Local logs and temporary files
+**/logs/
+*.log
+*.tmp
+*.temp
+*.cache
+
+# Local environment and secrets
+.env
+.env.*
+**/.env
+**/.env.*
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docker override/local files
+docker-compose.override.yml
+docker-compose.*.override.yml

@@ -1,0 +1,49 @@
+groups:
+  - name: service-availability
+    rules:
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "{{ $labels.job }} ({{ $labels.instance }}) has been unreachable by Prometheus for more than 1 minute."
+
+  - name: http-health
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum by (job) (rate(http_requests_received_total{code=~"5.."}[5m]))
+            /
+          sum by (job) (rate(http_requests_received_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High 5xx error rate on {{ $labels.job }}"
+          description: "{{ $labels.job }} is returning more than 5% server errors over the last 5 minutes."
+
+      - alert: HighRequestLatencyP95
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum by (le, job) (rate(http_request_duration_seconds_bucket[5m]))
+          ) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow responses on {{ $labels.job }}"
+          description: "95th percentile request latency for {{ $labels.job }} is above 1s for 5 minutes."
+
+  - name: runtime-health
+    rules:
+      - alert: HighProcessMemory
+        expr: process_working_set_bytes / (1024 * 1024) > 1024
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.job }}"
+          description: "{{ $labels.job }} working set is above 1024 MB for 10 minutes."
