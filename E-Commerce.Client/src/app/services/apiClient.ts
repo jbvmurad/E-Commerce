@@ -1,4 +1,5 @@
 import { API_BASE_URL, getStoredLanguage } from '../config/runtime';
+import { translateText } from '../i18n';
 
 export interface ValidationErrorResponse {
   errors: Record<string, string[]>;
@@ -53,7 +54,7 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
     });
   } catch {
     throw new ApiError(
-      `API Gateway bağlantısı kurulamadı (${API_BASE_URL}). Backend ve gateway durumunu kontrol et.`,
+      translateText('API Gateway bağlantısı kurulamadı ({{url}}). Backend ve gateway durumunu kontrol et.', { url: API_BASE_URL }),
       0,
     );
   }
@@ -77,7 +78,7 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}): Promi
 
     const fallback = typeof payload === 'string' && payload.trim()
       ? payload
-      : `İstek başarısız oldu (${response.status}).`;
+      : translateText('İstek başarısız oldu ({{status}}).', { status: response.status });
 
     throw new ApiError(extractErrorMessage(payload, fallback), response.status);
   }

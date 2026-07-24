@@ -7,6 +7,7 @@ import { Modal } from '../Modal';
 import { profileService } from '../../services/profileService';
 import { ApiError } from '../../services/apiClient';
 import { AddressPayload, UserAddressResponse } from '../../types/api';
+import { translateText } from '../../i18n';
 
 const emptyAddress: AddressPayload = {
   title: '',
@@ -101,7 +102,7 @@ export function AddressManager() {
   };
 
   const remove = async (address: UserAddressResponse) => {
-    if (!window.confirm(`“${address.title}” adresi silinsin mi?`)) return;
+    if (!window.confirm(translateText('“{{title}}” adresi silinsin mi?', { title: address.title }))) return;
 
     setError('');
     setMessage('');

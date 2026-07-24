@@ -1,5 +1,6 @@
 import { Bot, Download, FileImage, FileText, User } from 'lucide-react';
 import { AiMessage } from '../../types/ai';
+import { getLanguageLocale } from '../../i18n';
 
 interface AiMessageBubbleProps {
   message: AiMessage;
@@ -8,7 +9,7 @@ interface AiMessageBubbleProps {
 }
 
 function formatTime(date: Date) {
-  return new Intl.DateTimeFormat('tr-TR', { hour: '2-digit', minute: '2-digit' }).format(date);
+  return new Intl.DateTimeFormat(getLanguageLocale(), { hour: '2-digit', minute: '2-digit' }).format(date);
 }
 
 export function AiMessageBubble({ message, accent = '#ff00ff', compact = false }: AiMessageBubbleProps) {

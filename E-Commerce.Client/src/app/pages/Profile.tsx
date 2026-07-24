@@ -10,6 +10,7 @@ import { profileService } from '../services/profileService';
 import { ApiError, firstValidationMessage } from '../services/apiClient';
 import { getAuthSession } from '../auth/authSession';
 import { ProfileResponse } from '../types/api';
+import { translateText } from '../i18n';
 
 function splitFullName(value: string) {
   const parts = value.trim().split(/\s+/).filter(Boolean);
@@ -111,7 +112,7 @@ export function Profile() {
       setMessage(combinedMessage);
       setImage(null);
       if (passwordChanged) {
-        window.alert(`${combinedMessage} Yeniden giriş yapmalısınız.`);
+        window.alert(translateText('{{message}} Yeniden giriş yapmalısınız.', { message: combinedMessage }));
         navigate('/login');
         return;
       }
@@ -179,14 +180,6 @@ export function Profile() {
                 </div>
 
                 <div className="pt-6 border-t border-[var(--border)]">
-                  <h2 className="text-xl text-[#00f5ff] mb-4">Account Information</h2>
-                  <div className="bg-[rgba(0,245,255,0.04)] border border-[rgba(0,245,255,0.15)] p-4 space-y-2 text-sm">
-                    <div className="flex justify-between"><span className="text-muted-foreground">Member since:</span><span className="text-[#00f5ff]">{profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : '—'}</span></div>
-                    <div className="flex justify-between"><span className="text-muted-foreground">Account roles:</span><span className="text-foreground">{session?.roles.join(', ') || 'Customer'}</span></div>
-                  </div>
-                </div>
-
-                <div className="pt-6 border-t border-[var(--border)]">
                   <h2 className="text-xl text-[#00f5ff] mb-4">Change Password</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="md:col-span-2"><Input label="Current Password" type="password" value={formData.currentPassword} onChange={(event) => setFormData({ ...formData, currentPassword: event.target.value })} error={fieldErrors.currentPassword} /></div>
@@ -203,10 +196,6 @@ export function Profile() {
 
               <AddressManager />
 
-              <div className="mt-12 pt-8 border-t border-red-500/20">
-                <h2 className="text-xl text-red-400 mb-3">Danger Zone</h2>
-                <p className="text-sm text-muted-foreground">The current backend exposes user deletion only as an administrator permission. Self-account deletion is intentionally not sent from this page.</p>
-              </div>
             </div>
           </main>
         </div>

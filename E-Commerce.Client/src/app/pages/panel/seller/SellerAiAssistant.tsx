@@ -1,50 +1,11 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
-import {
-  Bot,
-  ImagePlus,
-  Loader2,
-  MessageSquareText,
-  PackageSearch,
-  Send,
-  Target,
-} from 'lucide-react';
+import { Bot, Loader2, Send } from 'lucide-react';
 import { AiAttachmentPicker } from '../../../components/ai/AiAttachmentPicker';
 import { AiMessageBubble } from '../../../components/ai/AiMessageBubble';
 import { aiAssistantService } from '../../../services/aiAssistantService';
 import { AiAttachment, AiMessage, AiMessageAttachment } from '../../../types/ai';
 
 const SELLER_ACCENT = '#00f5ff';
-
-const starterPrompts = [
-  {
-    icon: PackageSearch,
-    label: 'Ürün fikri',
-    prompt: 'Yeni sezon için satabileceğim üç ürün fikri ver ve nedenlerini açıkla.',
-  },
-  {
-    icon: MessageSquareText,
-    label: 'Açıklama yaz',
-    prompt: 'Ürünüm için dönüşüm odaklı başlık ve açıklama hazırlamama yardım et.',
-  },
-  {
-    icon: Target,
-    label: 'Kampanya planla',
-    prompt: 'Düşük stoklu ürünlerim için uygulanabilir bir kampanya planı oluştur.',
-  },
-  {
-    icon: ImagePlus,
-    label: 'Görsel oluştur',
-    prompt: 'Premium bir ürün görseli oluşturmak istiyorum. İhtiyacın olan bilgileri bana sor.',
-  },
-];
-
-const initialMessage: AiMessage = {
-  id: 'seller-welcome',
-  role: 'assistant',
-  createdAt: new Date(),
-  content:
-    'Merhaba! Ürün fikri, ilan metni, fiyatlandırma, kampanya ve görsel üretimi konusunda yardımcı olabilirim. PDF veya görseli ataç düğmesiyle sohbete ekleyip incelememi de isteyebilirsin.',
-};
 
 function toMessageAttachments(attachments: AiAttachment[]): AiMessageAttachment[] {
   return attachments.map(({ id, name, mimeType, size, previewUrl }) => ({
@@ -57,7 +18,7 @@ function toMessageAttachments(attachments: AiAttachment[]): AiMessageAttachment[
 }
 
 export function SellerAiAssistant() {
-  const [messages, setMessages] = useState<AiMessage[]>([initialMessage]);
+  const [messages, setMessages] = useState<AiMessage[]>([]);
   const [message, setMessage] = useState('');
   const [attachments, setAttachments] = useState<AiAttachment[]>([]);
   const [sending, setSending] = useState(false);
@@ -79,7 +40,7 @@ export function SellerAiAssistant() {
       role: 'user',
       content:
         trimmed ||
-        'Eklediğim dosyayı incele; ne olduğunu, ürün satışında nasıl kullanabileceğimi ve geliştirme önerilerini açıkla.',
+        'Ekli dosyayı incele.',
       createdAt: new Date(),
       attachments: toMessageAttachments(attachments),
     };
@@ -162,7 +123,7 @@ export function SellerAiAssistant() {
               Seller Copilot
             </h1>
             <p style={{ color: 'rgba(224,247,255,.34)', fontSize: 10 }}>
-              Mesaj yaz, PDF veya görsel ekle; görsel üretimini de sohbetten iste.
+              Mesajınızı yazın ve sohbeti başlatın.
             </p>
           </div>
         </div>
@@ -204,26 +165,6 @@ export function SellerAiAssistant() {
         className="px-5 pt-3 pb-4 shrink-0"
         style={{ borderTop: '1px solid rgba(0,245,255,.09)' }}
       >
-        <div className="flex flex-wrap gap-2 mb-3">
-          {starterPrompts.map(({ icon: Icon, label, prompt }) => (
-            <button
-              type="button"
-              key={label}
-              onClick={() => setMessage(prompt)}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full transition-all"
-              style={{
-                color: 'rgba(224,247,255,.52)',
-                background: 'rgba(0,245,255,.045)',
-                border: '1px solid rgba(0,245,255,.14)',
-                fontSize: 10,
-              }}
-            >
-              <Icon size={11} style={{ color: SELLER_ACCENT }} />
-              {label}
-            </button>
-          ))}
-        </div>
-
         <form
           onSubmit={sendMessage}
           className="rounded-xl p-3"
@@ -246,7 +187,7 @@ export function SellerAiAssistant() {
               value={message}
               onChange={(event) => setMessage(event.target.value)}
               onKeyDown={onMessageKeyDown}
-              placeholder="Ürün, kampanya, görsel üretimi veya eklediğin dosya hakkında sor…"
+              placeholder="Mesajınızı yazın…"
               rows={2}
               className="flex-1 resize-none bg-transparent outline-none"
               style={{

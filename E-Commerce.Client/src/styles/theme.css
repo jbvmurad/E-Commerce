@@ -301,3 +301,77 @@
     box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(168, 85, 247, 0.3);
   }
 }
+
+/* Unified neon scrollbars — page, panels, tables, modals and AI chats */
+html {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 245, 255, 0.72) rgba(2, 4, 8, 0.92);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 245, 255, 0.62) rgba(2, 4, 8, 0.76);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(2, 4, 8, 0.88);
+  border: 1px solid rgba(0, 245, 255, 0.08);
+}
+
+*::-webkit-scrollbar-thumb {
+  min-height: 42px;
+  border: 2px solid rgba(2, 4, 8, 0.92);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(0, 245, 255, 0.82), rgba(0, 180, 200, 0.58));
+  box-shadow: inset 0 0 0 1px rgba(224, 247, 255, 0.1), 0 0 10px rgba(0, 245, 255, 0.18);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00f5ff, rgba(0, 180, 200, 0.88));
+  box-shadow: inset 0 0 0 1px rgba(224, 247, 255, 0.22), 0 0 14px rgba(0, 245, 255, 0.42);
+}
+
+*::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #7cfaff, #00b4c8);
+}
+
+*::-webkit-scrollbar-corner {
+  background: #020408;
+}
+
+[data-slot='scroll-area-scrollbar'] {
+  background: rgba(2, 4, 8, 0.72);
+}
+
+[data-slot='scroll-area-thumb'] {
+  border: 2px solid rgba(2, 4, 8, 0.9);
+  background: linear-gradient(180deg, rgba(0, 245, 255, 0.82), rgba(0, 180, 200, 0.6));
+  box-shadow: 0 0 10px rgba(0, 245, 255, 0.2);
+}
+
+/* The account card stays in its viewport position while profile content scrolls. */
+.account-sidebar {
+  height: fit-content;
+}
+
+@media (min-width: 1024px) {
+  .account-sidebar {
+    position: sticky;
+    top: 6rem;
+    z-index: 20;
+    align-self: flex-start;
+    max-height: calc(100vh - 7rem);
+  }
+
+  .account-sidebar__panel {
+    max-height: calc(100vh - 7rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}

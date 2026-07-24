@@ -4,6 +4,7 @@ import { ToastContainer, useToast } from '../../../components/dashboard/DashToas
 import { adminService } from '../../../services/adminService';
 import { ApiError } from '../../../services/apiClient';
 import { RoleResponse, UserResponse, UserRoleResponse } from '../../../types/api';
+import { translateText } from '../../../i18n';
 
 const CYAN = '#00f5ff';
 const cardStyle = { background: 'rgba(0,245,255,0.04)', border: '1px solid rgba(0,245,255,0.15)', borderRadius: 8 };
@@ -66,7 +67,7 @@ export function AdminAuthorization() {
   };
 
   const deleteRole = async () => {
-    if (!selectedRole || !window.confirm(`${selectedRole.name ?? 'Rol'} silinsin mi?`)) return;
+    if (!selectedRole || !window.confirm(translateText('{{role}} silinsin mi?', { role: selectedRole.name ?? translateText('Rol') }))) return;
     try {
       const response = await adminService.deleteRole(selectedRole.id);
       show(response.message, 'success');
@@ -90,7 +91,7 @@ export function AdminAuthorization() {
   };
 
   const removeAssignment = async (assignment: UserRoleResponse) => {
-    if (!window.confirm(`${assignment.userFullName} kullanıcısından ${assignment.roleName ?? 'rol'} kaldırılsın mı?`)) return;
+    if (!window.confirm(translateText('{{user}} kullanıcısından {{role}} kaldırılsın mı?', { user: assignment.userFullName, role: assignment.roleName ?? translateText('rol') }))) return;
     try {
       const response = await adminService.removeRoles(assignment.userId, [assignment.roleId]);
       show(response.message, 'success');

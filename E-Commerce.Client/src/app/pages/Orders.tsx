@@ -10,6 +10,7 @@ import { authService } from '../services/authService';
 import { profileService } from '../services/profileService';
 import { ApiError } from '../services/apiClient';
 import { ProfileResponse } from '../types/api';
+import { getLanguageLocale } from '../i18n';
 
 export function Orders() {
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ export function Orders() {
   };
 
   const accountName = profile?.fullName ?? session?.fullName ?? '';
+  const locale = getLanguageLocale();
 
   return (
     <div className="min-h-screen bg-[#020408]">
@@ -85,7 +87,7 @@ export function Orders() {
                         Order {order.orderNumber}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        Placed on {new Date(order.orderDate).toLocaleDateString('en-US', {
+                        Placed on {new Date(order.orderDate).toLocaleDateString(locale, {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',

@@ -7,6 +7,7 @@ import { ToastContainer, useToast } from '../../../components/dashboard/DashToas
 import { adminService } from '../../../services/adminService';
 import { ApiError } from '../../../services/apiClient';
 import { UserResponse } from '../../../types/api';
+import { translateText } from '../../../i18n';
 
 const CYAN = '#00f5ff';
 const cardStyle = { background: 'rgba(0,245,255,0.04)', border: '1px solid rgba(0,245,255,0.15)', borderRadius: 8 };
@@ -48,7 +49,7 @@ export function AdminCustomers() {
   const paged = filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   const deleteCustomer = async (customer: UserResponse) => {
-    if (!window.confirm(`${customer.fullName} kullanıcısı silinsin mi?`)) return;
+    if (!window.confirm(translateText('{{name}} kullanıcısı silinsin mi?', { name: customer.fullName }))) return;
     try {
       const response = await adminService.deleteUser(customer.id);
       show(response.message, 'success');

@@ -5,20 +5,10 @@ import { aiAssistantService } from '../../services/aiAssistantService';
 import { AiMessage } from '../../types/ai';
 
 const CYAN = '#00f5ff';
-const quickQuestions = ['Siparişim nerede?', 'İade koşulları', 'Ürün öner', 'Ödeme sorunu'];
-
-const initialMessage: AiMessage = {
-  id: 'customer-welcome',
-  role: 'assistant',
-  content:
-    'Merhaba! Ürün seçimi, sipariş, teslimat, ödeme ve iade konularında yardımcı olabilirim. Nasıl yardımcı olayım?',
-  createdAt: new Date(),
-};
-
 export function CustomerAiChatWidget() {
   const [open, setOpen] = useState(false);
   const [minimized, setMinimized] = useState(false);
-  const [messages, setMessages] = useState<AiMessage[]>([initialMessage]);
+  const [messages, setMessages] = useState<AiMessage[]>([]);
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const messageListRef = useRef<HTMLDivElement>(null);
@@ -187,25 +177,6 @@ export function CustomerAiChatWidget() {
               </div>
 
               <div className="px-3 pb-3">
-                <div className="flex gap-1.5 overflow-x-auto pb-2">
-                  {quickQuestions.map((question) => (
-                    <button
-                      type="button"
-                      key={question}
-                      onClick={() => setMessage(question)}
-                      className="shrink-0 px-2.5 py-1.5 rounded-full"
-                      style={{
-                        color: 'rgba(224,247,255,.46)',
-                        border: '1px solid rgba(0,245,255,.14)',
-                        background: 'rgba(0,245,255,.035)',
-                        fontSize: 9,
-                      }}
-                    >
-                      {question}
-                    </button>
-                  ))}
-                </div>
-
                 <form
                   onSubmit={sendMessage}
                   className="p-2.5 rounded-xl"

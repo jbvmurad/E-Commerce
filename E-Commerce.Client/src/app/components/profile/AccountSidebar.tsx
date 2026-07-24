@@ -38,8 +38,8 @@ export function AccountSidebar({
   const initials = getInitials(displayName);
 
   return (
-    <aside className="lg:col-span-1 lg:sticky lg:top-24 lg:self-start">
-      <div className="bg-[rgba(0,245,255,0.04)] p-6 border border-[rgba(0,245,255,0.15)] shadow-[var(--shadow-card)]">
+    <aside className="account-sidebar lg:col-span-1 lg:self-start">
+      <div className="account-sidebar__panel bg-[rgba(0,245,255,0.04)] p-6 border border-[rgba(0,245,255,0.15)] shadow-[var(--shadow-card)]">
         <div className="flex flex-col items-center mb-6 pb-6 border-b border-[var(--border)]">
           <div className="relative mb-3">
             {imageUrl ? (

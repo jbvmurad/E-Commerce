@@ -4,10 +4,12 @@ import { Badge } from '../components/Badge';
 import { Card } from '../components/Card';
 import { mockOrders } from '../data/mockData';
 import type { OrderStatus } from '../data/mockData';
+import { getLanguageLocale } from '../i18n';
 
 export function OrderDetail() {
   const { id } = useParams();
   const order = mockOrders.find((o) => o.id === Number(id));
+  const locale = getLanguageLocale();
 
   if (!order) {
     return (
@@ -85,7 +87,7 @@ export function OrderDetail() {
             <div className="flex justify-between">
               <dt className="text-gray-600">Order Date:</dt>
               <dd className="text-[var(--navy)]">
-                {new Date(order.orderDate).toLocaleDateString('en-US', {
+                {new Date(order.orderDate).toLocaleDateString(locale, {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
