@@ -174,15 +174,7 @@ export function SellerAiAssistant() {
             boxShadow: '0 0 24px rgba(0,245,255,.04)',
           }}
         >
-          <AiAttachmentPicker
-            attachments={attachments}
-            onChange={setAttachments}
-            accent={SELLER_ACCENT}
-            compact
-            maxFiles={5}
-          />
-
-          <div className="flex items-end gap-2 mt-2">
+          <div className="flex items-end gap-2">
             <textarea
               value={message}
               onChange={(event) => setMessage(event.target.value)}
@@ -199,20 +191,30 @@ export function SellerAiAssistant() {
               }}
             />
 
-            <button
-              type="submit"
-              disabled={sending || (!message.trim() && attachments.length === 0)}
-              className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-all disabled:opacity-30"
-              style={{
-                background: 'rgba(0,245,255,.15)',
-                border: '1px solid rgba(0,245,255,.4)',
-                color: SELLER_ACCENT,
-                boxShadow: '0 0 16px rgba(0,245,255,.09)',
-              }}
-              aria-label="Mesajı gönder"
-            >
-              {sending ? <Loader2 size={17} className="animate-spin" /> : <Send size={17} />}
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <AiAttachmentPicker
+                attachments={attachments}
+                onChange={setAttachments}
+                accent={SELLER_ACCENT}
+                compact
+                maxFiles={5}
+              />
+
+              <button
+                type="submit"
+                disabled={sending || (!message.trim() && attachments.length === 0)}
+                className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-all disabled:opacity-30"
+                style={{
+                  background: 'rgba(0,245,255,.15)',
+                  border: '1px solid rgba(0,245,255,.4)',
+                  color: SELLER_ACCENT,
+                  boxShadow: '0 0 16px rgba(0,245,255,.09)',
+                }}
+                aria-label="Mesajı gönder"
+              >
+                {sending ? <Loader2 size={17} className="animate-spin" /> : <Send size={17} />}
+              </button>
+            </div>
           </div>
 
           <p style={{ color: 'rgba(224,247,255,.2)', fontSize: 9 }}>

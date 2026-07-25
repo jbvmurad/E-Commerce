@@ -74,7 +74,7 @@ export function AiAttachmentPicker({
   };
 
   return (
-    <div>
+    <div className={compact ? 'relative shrink-0' : undefined}>
       {!compact && (
         <div
           onClick={() => inputRef.current?.click()}
@@ -117,7 +117,12 @@ export function AiAttachmentPicker({
       )}
 
       {attachments.length > 0 && (
-        <div className={`flex gap-2 overflow-x-auto ${compact ? 'mt-2' : 'mt-3'}`}>
+        <div
+          className={compact
+            ? 'absolute right-0 bottom-[calc(100%+0.5rem)] z-20 flex gap-2 overflow-x-auto border border-[rgba(0,245,255,0.18)] bg-[#020408] p-2 shadow-[0_12px_35px_rgba(0,0,0,0.45)]'
+            : 'mt-3 flex gap-2 overflow-x-auto'}
+          style={compact ? { width: 'min(520px, calc(100vw - 80px))' } : undefined}
+        >
           {attachments.map((attachment) => (
             <div
               key={attachment.id}
@@ -156,7 +161,22 @@ export function AiAttachmentPicker({
         </div>
       )}
 
-      {error && <p className="mt-2" style={{ color: '#ff7777', fontSize: 10 }}>{error}</p>}
+      {error && (
+        <p
+          className={compact
+            ? 'absolute right-0 z-30 whitespace-nowrap border border-red-500/25 bg-[#16070a] px-2 py-1'
+            : 'mt-2'}
+          style={{
+            color: '#ff7777',
+            fontSize: 10,
+            ...(compact
+              ? { bottom: attachments.length > 0 ? 'calc(100% + 76px)' : 'calc(100% + 8px)' }
+              : {}),
+          }}
+        >
+          {error}
+        </p>
+      )}
     </div>
   );
 }

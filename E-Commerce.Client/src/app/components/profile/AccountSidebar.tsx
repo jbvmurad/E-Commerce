@@ -1,5 +1,7 @@
-import { LogOut, Package, Upload, User } from 'lucide-react';
+import { ChevronRight, LayoutDashboard, LogOut, Package, Upload, User } from 'lucide-react';
 import { Link } from 'react-router';
+import type { ReactNode } from 'react';
+import { useAuthSession } from '../../auth/authSession';
 
 type AccountSection = 'orders' | 'profile';
 
@@ -23,8 +25,26 @@ function getInitials(fullName: string) {
     .toUpperCase() || 'US';
 }
 
-const passiveLinkClass = 'flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-[rgba(0,245,255,0.1)] hover:text-[#00f5ff] border border-transparent hover:border-[rgba(0,245,255,0.3)] transition-all duration-300';
-const activeLinkClass = 'flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[#00f5ff] to-[#00b4c8] text-[#020408] border-l-4 border-[#00f5ff]';
+interface AccountLinkProps {
+  to: string;
+  label: string;
+  icon: ReactNode;
+  active?: boolean;
+}
+
+function AccountLink({ to, label, icon, active = false }: AccountLinkProps) {
+  return (
+    <Link
+      to={to}
+      className={`account-command__item${active ? ' account-command__item--active' : ''}`}
+      aria-current={active ? 'page' : undefined}
+    >
+      <span className="account-command__icon">{icon}</span>
+      <span className="account-command__label">{label}</span>
+      <ChevronRight className="account-command__arrow" size={16} aria-hidden="true" />
+    </Link>
+  );
+}
 
 export function AccountSidebar({
   activeSection,
@@ -34,28 +54,38 @@ export function AccountSidebar({
   onImageChange,
   onLogout,
 }: AccountSidebarProps) {
+  const session = useAuthSession();
   const displayName = fullName.trim() || email?.split('@')[0] || 'User';
   const initials = getInitials(displayName);
+  const normalizedRoles = session?.roles.map((role) => role.trim().toLowerCase()) ?? [];
+  const dashboardPath = normalizedRoles.includes('admin')
+    ? '/panel/admin'
+    : normalizedRoles.includes('seller')
+      ? '/panel/seller'
+      : null;
 
   return (
     <aside className="account-sidebar lg:col-span-1 lg:self-start">
-      <div className="account-sidebar__panel bg-[rgba(0,245,255,0.04)] p-6 border border-[rgba(0,245,255,0.15)] shadow-[var(--shadow-card)]">
-        <div className="flex flex-col items-center mb-6 pb-6 border-b border-[var(--border)]">
-          <div className="relative mb-3">
+      <div className="account-command">
+        <div className="account-command__edge" aria-hidden="true" />
+
+        <div className="account-command__identity">
+          <div className="account-command__avatar-wrap">
+            <div className="account-command__avatar-ring" aria-hidden="true" />
             {imageUrl ? (
               <img
                 src={imageUrl}
                 alt={displayName}
-                className="w-20 h-20 rounded-full object-cover border border-[rgba(0,245,255,0.35)]"
+                className="account-command__avatar account-command__avatar--image"
               />
             ) : (
-              <div className="w-20 h-20 rounded-full flex items-center justify-center text-xl font-bold text-[#020408] bg-gradient-to-br from-[#00f5ff] to-[#0080aa]">
+              <div className="account-command__avatar account-command__avatar--initials">
                 {initials}
               </div>
             )}
 
             {onImageChange && (
-              <label className="absolute bottom-0 right-0 p-1.5 bg-[#00f5ff] text-[#020408] rounded-full cursor-pointer hover:shadow-[0_0_15px_rgba(0,245,255,.7)] transition-shadow" aria-label="Upload profile image">
+              <label className="account-command__upload" aria-label="Upload profile image">
                 <Upload size={14} />
                 <input
                   type="file"
@@ -67,28 +97,41 @@ export function AccountSidebar({
             )}
           </div>
 
-          <h3 className="text-lg text-[#00f5ff] text-center break-words max-w-full">{displayName}</h3>
-          {email && <p className="text-sm text-muted-foreground text-center break-all">{email}</p>}
+          <div className="account-command__identity-copy">
+            <h3>{displayName}</h3>
+            {email && <p>{email}</p>}
+          </div>
         </div>
 
-        <nav className="space-y-2">
-          <Link to="/orders" className={activeSection === 'orders' ? activeLinkClass : passiveLinkClass}>
-            <Package size={18} />
-            My Orders
-          </Link>
-          <Link to="/profile" className={activeSection === 'profile' ? activeLinkClass : passiveLinkClass}>
-            <User size={18} />
-            Profile
-          </Link>
-          <button
-            type="button"
-            onClick={onLogout}
-            className="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all duration-300 w-full"
-          >
-            <LogOut size={18} />
-            Logout
-          </button>
+        <nav className="account-command__menu">
+          {dashboardPath && (
+            <AccountLink
+              to={dashboardPath}
+              label="Dashboard"
+              icon={<LayoutDashboard size={18} />}
+            />
+          )}
+
+          <AccountLink
+            to="/orders"
+            label="My Orders"
+            icon={<Package size={18} />}
+            active={activeSection === 'orders'}
+          />
+
+          <AccountLink
+            to="/profile"
+            label="Profile"
+            icon={<User size={18} />}
+            active={activeSection === 'profile'}
+          />
         </nav>
+
+        <button type="button" onClick={onLogout} className="account-command__logout">
+          <span className="account-command__logout-icon"><LogOut size={18} /></span>
+          <span>Logout</span>
+          <ChevronRight size={16} aria-hidden="true" />
+        </button>
       </div>
     </aside>
   );

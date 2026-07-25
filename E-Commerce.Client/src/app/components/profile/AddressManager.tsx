@@ -116,7 +116,7 @@ export function AddressManager() {
   };
 
   return (
-    <section className="pt-8 border-t border-[var(--border)]">
+    <section className="mt-8 pt-8 border-t border-[var(--border)]">
       <div className="flex items-center justify-between gap-4 mb-5">
         <div>
           <h2 className="text-xl text-[#00f5ff]" style={{ textShadow: '0 0 15px #00f5ff' }}>

@@ -167,7 +167,7 @@ export function Profile() {
               {message && <p className="mb-5 text-sm text-[#4ade80] border border-[#4ade80]/25 bg-[#4ade80]/5 p-3">{message}</p>}
               {error && <p className="mb-5 text-sm text-red-400 border border-red-500/25 bg-red-500/5 p-3">{error}</p>}
 
-              <form onSubmit={handleSubmit} className="space-y-8">
+              <form id="profile-settings-form" onSubmit={handleSubmit} className="space-y-8">
                 <div>
                   <h2 className="text-xl text-[#00f5ff] mb-4">Personal Information</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,13 +188,26 @@ export function Profile() {
                   </div>
                 </div>
 
-                <div className="flex justify-between pt-6 border-t border-[var(--border)]">
-                  <Button type="submit" variant="primary" disabled={saving}><span className="flex items-center gap-2">{saving && <Loader2 className="animate-spin" size={16} />}{saving ? 'Saving…' : 'Save Changes'}</span></Button>
-                  <Button type="button" variant="ghost" onClick={() => window.location.reload()}>Cancel</Button>
-                </div>
               </form>
 
               <AddressManager />
+
+              <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 mt-8 pt-6 border-t border-[var(--border)]">
+                <Button
+                  type="submit"
+                  form="profile-settings-form"
+                  variant="primary"
+                  disabled={saving}
+                >
+                  <span className="flex items-center justify-center gap-2">
+                    {saving && <Loader2 className="animate-spin" size={16} />}
+                    {saving ? 'Saving…' : 'Save Changes'}
+                  </span>
+                </Button>
+                <Button type="button" variant="ghost" onClick={() => window.location.reload()}>
+                  Cancel
+                </Button>
+              </div>
 
             </div>
           </main>
